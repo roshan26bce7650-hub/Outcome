@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0A0A0F">
+  <meta name="description" content="Explore game matchups and estimate outcomes with an explainable prediction workspace.">
+  <title>Outcome — Game Prediction Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+<header class="topbar">
+  <a class="brand" href="#home" aria-label="Outcome home"><span class="brand-mark">O</span><span>outcome<span class="brand-dot">.</span></span></a>
+  <nav class="nav-links" aria-label="Main navigation">
+    <a class="nav-link active" href="#explore">Explore games</a>
+    <a class="nav-link" href="#predictor">Predictor</a>
+    <a class="nav-link" href="#model-lab">Model lab</a>
+  </nav>
+  <div class="top-actions"><span class="open-badge"><span class="status-dot"></span> Open access</span><button class="icon-button" id="themeHint" type="button" aria-label="Show platform info" title="About Outcome">ⓘ</button></div>
+  <button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation" aria-expanded="false" type="button">☰</button>
+</header>
+
+<main id="home">
+  <section class="hero shell">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="pulse-dot"></span> GAME OUTCOME INTELLIGENCE <span class="eyebrow-line"></span> <span class="mono">BETA 01</span></div>
+      <h1>Every matchup<br>has a <span class="headline-accent">story.</span></h1>
+      <p class="hero-text">Explore the games you love. Compare competitors. Turn pre-game stats into probability-based insights — without an account.</p>
+      <div class="hero-actions"><a class="button button-primary" href="#predictor">Build a prediction <span aria-hidden="true">↗</span></a><a class="button button-secondary" href="#explore">Explore games <span aria-hidden="true">↓</span></a></div>
+      <div class="hero-proof"><div class="proof-avatars"><span>🏏</span><span>⚽</span><span>🎮</span><span>🏀</span></div><span>Sports · Esports · More</span><span class="proof-divider"></span><span class="mono">NO LOGIN REQUIRED</span></div>
+    </div>
+    <div class="hero-visual" aria-label="Illustration of a matchup prediction">
+      <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="hero-glow"></div>
+      <div class="match-card">
+        <div class="match-card-top"><span class="live-label"><span class="status-dot"></span> PREDICTION WORKSPACE</span><span class="mono tiny">PRE-GAME</span></div>
+        <div class="versus-row"><div class="team-block"><div class="team-emblem emblem-a">A</div><span class="team-name">TEAM ALPHA</span><span class="team-meta">Competitor A</span></div><div class="versus">VS</div><div class="team-block"><div class="team-emblem emblem-b">B</div><span class="team-name">TEAM BETA</span><span class="team-meta">Competitor B</span></div></div>
+        <div class="probability-heading"><span>Outcome probability</span><span class="mono tiny">ILLUSTRATION</span></div>
+        <div class="probability-row"><div class="prob-label"><span>Team Alpha</span><strong>62%</strong></div><div class="prob-track"><span style="width:62%"></span></div></div>
+        <div class="probability-row"><div class="prob-label"><span>Team Beta</span><strong>28%</strong></div><div class="prob-track beta-track"><span style="width:28%"></span></div></div>
+        <div class="probability-row"><div class="prob-label"><span>Draw / Other</span><strong>10%</strong></div><div class="prob-track draw-track"><span style="width:10%"></span></div></div>
+        <div class="card-foot"><span>Illustrative values only</span><span class="foot-spark">↗ <span>Compare stats</span></span></div>
+      </div>
+      <div class="floating-chip chip-top"><span class="chip-icon">⌁</span><span><strong>Explainable</strong><small>See what matters</small></span></div>
+      <div class="floating-chip chip-bottom"><span class="chip-icon chip-icon-amber">◷</span><span><strong>Fast insights</strong><small>Model response in seconds</small></span></div>
+    </div>
+  </section>
+
+  <section class="metrics shell" aria-label="Platform principles">
+    <div class="metric"><span class="metric-number">01</span><div><strong>Choose your game</strong><p>Sports and esports in one place.</p></div></div>
+    <div class="metric"><span class="metric-number">02</span><div><strong>Enter pre-game stats</strong><p>Use the variables that matter.</p></div></div>
+    <div class="metric"><span class="metric-number">03</span><div><strong>Understand the odds</strong><p>Probabilities, not promises.</p></div></div>
+  </section>
+
+  <section class="section shell" id="explore">
+    <div class="section-head"><div><div class="section-kicker">THE GAME DIRECTORY</div><h2>Pick your arena<span class="headline-accent">.</span></h2><p class="section-description">Choose from popular sports and competitive games. Search, filter, then launch your matchup.</p></div><span class="catalog-count" id="catalogCount">21 games</span></div>
+    <div class="directory-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input id="gameSearch" type="search" placeholder="Search games, sports or esports..." autocomplete="off" aria-label="Search games"><kbd>↵</kbd></label><div class="filter-pills" role="group" aria-label="Filter games"><button class="filter-pill selected" data-filter="All" type="button">All games</button><button class="filter-pill" data-filter="Sports" type="button">Sports</button><button class="filter-pill" data-filter="Esports" type="button">Esports</button><button class="filter-pill" data-filter="Other" type="button">Other</button></div></div>
+    <div class="game-grid" id="gameGrid">
+      {% for game in games %}
+      <button class="game-card" type="button" data-game="{{ game.name }}" data-category="{{ game.category }}" data-description="{{ game.description|lower }}">
+        <span class="game-card-top"><span class="game-icon">{{ game.icon }}</span><span class="card-arrow">↗</span></span>
+        <span class="game-category">{{ game.category }}</span><strong class="game-name">{{ game.name }}</strong><span class="game-description">{{ game.description }}</span>
+        <span class="game-card-bottom"><span>Choose matchup</span><span aria-hidden="true">→</span></span>
+      </button>
+      {% endfor %}
+    </div>
+    <div class="empty-state" id="emptyGames" hidden><span>⌕</span><strong>No games found</strong><p>Try another search or switch categories.</p><button class="button button-secondary" id="clearSearch" type="button">Clear filters</button></div>
+  </section>
+
+  <section class="predictor-section" id="predictor">
+    <div class="shell predictor-layout">
+      <div class="predictor-intro"><div class="section-kicker">MATCHUP BUILDER</div><h2>Make your<br>next move<span class="headline-accent">.</span></h2><p>Choose a game, enter two competitors and provide pre-game statistics. Once a real model has been trained on historical results, you can generate a prediction here.</p>
+        <div class="trust-note"><span class="trust-icon">⌁</span><div><strong>Evidence over hype</strong><p>Predictions are estimates. The model must be trained on relevant historical data before it can provide meaningful probabilities.</p></div></div>
+      </div>
+      <form class="predictor-card" id="predictForm">
+        <div class="form-card-head"><div><span class="form-step">STEP 01</span><h3>Configure matchup</h3></div><span class="form-status" id="modelStatus"><span class="status-dot status-muted"></span> Model not trained</span></div>
+        <div class="form-field"><label for="gameSelect">Game or sport</label><select id="gameSelect" name="game" required>{% for game in games %}<option value="{{ game.name }}">{{ game.icon }} {{ game.name }}</option>{% endfor %}</select></div>
+        <div class="competitor-grid"><div class="form-field"><label for="participantA">Competitor A</label><input id="participantA" name="participant_a" placeholder="e.g. India" maxlength="80" required><span class="field-hint">Team or player name</span></div><div class="form-field"><label for="participantB">Competitor B</label><input id="participantB" name="participant_b" placeholder="e.g. Australia" maxlength="80" required><span class="field-hint">Team or player name</span></div></div>
+        <div class="form-divider"><span>PRE-GAME VARIABLES</span><span class="mono">01—05</span></div>
+        <div class="stat-grid">
+          <div class="form-field"><label for="aWin">A · Historical win rate <span class="label-unit">%</span></label><input id="aWin" type="number" min="0" max="100" value="60" required><input class="range-input" id="aWinRange" type="range" min="0" max="100" value="60" aria-label="Competitor A win rate"></div>
+          <div class="form-field"><label for="bWin">B · Historical win rate <span class="label-unit">%</span></label><input id="bWin" type="number" min="0" max="100" value="55" required><input class="range-input" id="bWinRange" type="range" min="0" max="100" value="55" aria-label="Competitor B win rate"></div>
+          <div class="form-field"><label for="aForm">A · Recent form <span class="label-unit">%</span></label><input id="aForm" type="number" min="0" max="100" value="60" required><input class="range-input" id="aFormRange" type="range" min="0" max="100" value="60" aria-label="Competitor A recent form"></div>
+          <div class="form-field"><label for="bForm">B · Recent form <span class="label-unit">%</span></label><input id="bForm" type="number" min="0" max="100" value="50" required><input class="range-input" id="bFormRange" type="range" min="0" max="100" value="50" aria-label="Competitor B recent form"></div>
+          <div class="form-field"><label for="aRank">A · Rank / rating</label><input id="aRank" type="number" min="0" value="20" required><span class="field-hint">Use the same ranking scale for both</span></div>
+          <div class="form-field"><label for="bRank">B · Rank / rating</label><input id="bRank" type="number" min="0" value="25" required><span class="field-hint">Lower ranks often mean stronger</span></div>
+          <div class="form-field"><label for="aRest">A · Rest days</label><input id="aRest" type="number" min="0" max="365" value="3" required></div>
+          <div class="form-field"><label for="bRest">B · Rest days</label><input id="bRest" type="number" min="0" max="365" value="3" required></div>
+        </div>
+        <label class="toggle-row" for="homeAdvantage"><span><strong>Competitor A has home advantage</strong><small>Enable if A plays at its home venue / is the designated home side.</small></span><input type="checkbox" id="homeAdvantage"><span class="toggle-ui"></span></label>
+        <button class="button button-primary predict-button" type="submit" id="predictButton">Generate prediction <span aria-hidden="true">↗</span></button>
+        <p class="form-disclaimer">No account required. Do not use predictions as guarantees or as a substitute for your own judgment.</p>
+        <div class="form-message" id="predictMessage" role="status" aria-live="polite" hidden></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="results-section shell" id="results" hidden>
+    <div class="section-head results-head"><div><div class="section-kicker">MODEL OUTPUT</div><h2>Prediction report<span class="headline-accent">.</span></h2><p class="section-description" id="resultSubtitle"></p></div><button class="button button-secondary" id="resetPrediction" type="button">New prediction ↺</button></div>
+    <div class="results-grid"><div class="result-card result-featured"><span class="result-overline">HIGHEST MODEL PROBABILITY</span><div class="winner-name" id="winnerName">—</div><div class="winner-probability" id="winnerProbability">—<small>%</small></div><div class="result-bar"><span id="winnerBar"></span></div><p id="winnerNote">This is a model estimate, not a guarantee.</p></div><div class="result-card"><div class="result-card-head"><span>Outcome distribution</span><span class="mono tiny">PROBABILITY</span></div><div id="probabilityBars" class="probability-bars"></div><div class="chart-legend"><span><i class="legend-dot legend-amber"></i> Competitor A</span><span><i class="legend-dot legend-slate"></i> Competitor B</span><span><i class="legend-dot legend-muted"></i> Draw</span></div></div></div>
+    <div class="result-meta"><div><span class="meta-label">MODEL TEST ACCURACY</span><strong id="modelAccuracy">—</strong></div><div><span class="meta-label">INFERENCE TIME</span><strong id="latency">—</strong></div><div><span class="meta-label">MODEL TYPE</span><strong>Random Forest</strong></div></div>
+    <p class="result-disclaimer" id="resultDisclaimer"></p>
+  </section>
+
+  <section class="section shell model-lab" id="model-lab">
+    <div class="section-head"><div><div class="section-kicker">FOR DATA OWNERS</div><h2>Model lab<span class="headline-accent">.</span></h2><p class="section-description">Train or refresh the model with historical match results. No login is required for this demo, so protect this endpoint before deploying it publicly.</p></div><span class="lab-badge">ADMIN TOOLING</span></div>
+    <div class="lab-grid">
+      <div class="lab-card dataset-card"><div class="lab-icon">↥</div><h3>Bring your dataset</h3><p>Upload a CSV containing historical matchups and their outcomes. The model will evaluate itself on a held-out test set.</p><div class="dataset-spec"><span class="mono">REQUIRED TARGET</span><strong>outcome = A, B, or DRAW</strong><span class="mono">MINIMUM ROWS</span><strong>20 valid records (more recommended)</strong></div><a class="text-link" href="/api/template.csv">Download CSV template <span>↓</span></a></div>
+      <form class="lab-card upload-card" id="uploadForm"><div class="upload-head"><div><span class="form-step">MODEL TRAINING</span><h3>Train / retrain</h3></div><span class="upload-symbol">⌁</span></div><label class="dropzone" for="datasetFile" id="dropzone"><input type="file" id="datasetFile" name="dataset" accept=".csv,text/csv" required><span class="upload-glyph">＋</span><strong id="fileName">Choose a CSV file</strong><small>CSV · Maximum 8 MB</small><span class="button button-secondary upload-choose">Browse files</span></label><button class="button button-primary train-button" id="trainButton" type="submit">Train model <span aria-hidden="true">↗</span></button><div class="form-message" id="trainMessage" role="status" aria-live="polite" hidden></div><div class="training-progress" id="trainingProgress" hidden><span></span></div></form>
+      <div class="lab-card model-status-card"><div class="status-card-top"><div class="lab-icon">◉</div><span class="status-pill" id="statusPill">NOT TRAINED</span></div><h3>Current model</h3><p id="modelSummary">No model is available yet. Upload relevant historical results to train one.</p><div class="model-stats"><div><span>Training rows</span><strong id="trainedRows">—</strong></div><div><span>Held-out accuracy</span><strong id="trainedAccuracy">—</strong></div><div><span>Last trained</span><strong id="trainedAt">—</strong></div></div><button class="text-link" id="refreshStatus" type="button">Refresh status <span>↻</span></button></div>
+    </div>
+    <div class="schema-note"><span>ⓘ</span><p><strong>Data schema:</strong> <code>game, participant_a, participant_b, a_win_rate, b_win_rate, a_recent_form, b_recent_form, a_rank, b_rank, a_rest_days, b_rest_days, a_home_advantage, outcome</code>. Rates and home advantage use values from 0–1; outcomes are A, B or DRAW. Keep features available before the match to avoid data leakage.</p></div>
+  </section>
+
+  <section class="faq-section shell"><div class="faq-intro"><div class="section-kicker">GOOD TO KNOW</div><h2>Clear odds.<br>Clear limits<span class="headline-accent">.</span></h2><p>Prediction tools are only as useful as the data behind them.</p></div><div class="faq-list">
+    <details class="faq-item"><summary>Do I need to create an account?<span>＋</span></summary><p>No. The public prediction interface is available without registration or login.</p></details>
+    <details class="faq-item"><summary>Does it support every game in the directory?<span>＋</span></summary><p>The directory is a broad game catalogue. Meaningful predictions require a trained model and comparable historical features for the selected game. Unknown game categories can be included in a dataset, but model performance must be checked per category.</p></details>
+    <details class="faq-item"><summary>Are predictions guaranteed to be correct?<span>＋</span></summary><p>No. Probabilities express the model's estimate, not certainty. Accuracy varies with the data, feature quality, competition and changing conditions.</p></details>
+    <details class="faq-item"><summary>How do I improve model quality?<span>＋</span></summary><p>Use clean, representative historical records, features known before each match, enough examples for each outcome, and a time-based test split when predicting future events.</p></details>
+  </div></section>
+</main>
+<footer class="footer"><div class="shell footer-inner"><a class="brand" href="#home"><span class="brand-mark">O</span><span>outcome<span class="brand-dot">.</span></span></a><p>Built for curiosity. Grounded in data.</p><div class="footer-links"><a href="#explore">Games</a><a href="#predictor">Predictor</a><a href="#model-lab">Model lab</a></div><span class="mono footer-copy">© 2026 OUTCOME LAB</span></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
