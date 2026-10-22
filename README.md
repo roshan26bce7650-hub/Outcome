@@ -1,5 +1,5 @@
 # Outcome — Game Outcome Prediction Lab
-
+lINK FOR WEBSITE- https://outcome-skzo.onrender.com/?game=Badminton&participant_a=a&participant_b=C#explore
 A responsive Flask web app with a searchable sports/esports directory, no-login matchup builder, prediction dashboard, CSV model-training panel, and a scikit-learn Random Forest pipeline.
 
 ## Important model/data note
